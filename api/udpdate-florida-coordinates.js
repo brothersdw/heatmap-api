@@ -12,58 +12,27 @@ const updateCoordinates = async (req, res) => {
     const coordinates = [];
     console.log("Made it here", response);
     await response.data.results.forEach((result, idx) => {
-      console.log(
-        "---------------------------------------------------------------------"
-      );
-      console.log("Record: ", result);
-      console.log(
-        "---------------------------------------------------------------------"
-      );
       const countyBoundary = result.geo_shape;
-      //   console.log("recordFields: ", record.fields);
-      console.log("county boundary", countyBoundary);
-      //   const { lng, lat } = result.geometry;
       let countyId = uuid();
       let idExists = coordinates.filter((ids) => ids.id === countyId);
-      console.log("idExists: ", idExists);
       while (idExists.length > 0) {
         countyId = uuid();
         idExists = coordinates.filter((ids) => ids.id === countyId);
         console.log(`There was an existing id ${countyId}`);
       }
-      // while ()
+      console.log(
+        "coordinates: ",
+        result.geo_shape.geometry.coordinates.length > 1
+      );
       coordinates.push({
         id: countyId,
         county: result.namelsad,
         geometry: JSON.stringify(result.geo_shape.geometry.coordinates),
+        type: result.geo_shape.geometry.type,
       });
     });
-
-    // console.log("Your coordinates: ", coordinates);
     coordinatesString = JSON.stringify(coordinates);
-    // const csvFilePath = "./data/county-boundaries.csv";
     const jsonFilePath = "./data/county-boundaries.json";
-    // const csvWriter = createCsvWriter({
-    //   path: csvFilePath,
-    //   header: [
-    //     { id: "id", title: "id" },
-    //     { id: "county", title: "county" },
-    //     { id: "geometry", title: "coordinates" },
-    //   ],
-    // });
-    // console.log("coordinates: ", coordinates);
-    // return csvWriter
-    //   .writeRecords(coordinates)
-    //   .then(() => {
-    //     console.log(`CSV file ${csvFilePath} has been successfully written`);
-
-    //     console.log("successfully pulled coordinates");
-    //     return res.status(200).json(coordinates);
-    //   })
-    //   .catch((err) => {
-    //     console.log(`Error writing CSV file: ${err}`);
-    //   });
-    // const stringifiedCoordinates = JSON.stringify(coordinates);
     console.log("Your stringified coordinates: ", coordinates);
     fs.writeFile(jsonFilePath, JSON.stringify(coordinates), (err) => {
       if (err) {

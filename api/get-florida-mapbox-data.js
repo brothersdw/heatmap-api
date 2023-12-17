@@ -19,20 +19,16 @@ const buildMapBoxData = async (req, res) => {
         type: "Feature",
         properties: properties,
         geometry: {
-          type: "Polygon",
+          type: c.type,
           coordinates: JSON.parse(c.geometry),
         },
       };
-      //   console.log(mapboxData);
       return gatherMaboxData;
     });
-    // console.log(testFeatures);
     const mapboxData = {
       type: "FeatureCollection",
       features,
     };
-
-    // console.log("diseases1: ", mapboxData);
     return res.status(200).send(mapboxData);
   } catch (err) {
     console.log("Something went wrong when trying to build mapbox data: ", err);
@@ -41,13 +37,5 @@ const buildMapBoxData = async (req, res) => {
     });
   }
 };
-
-// console.log(
-//   [
-//     { disease: "disease 1", id: 1 },
-//     { disease: "disease 2", id: 2 },
-//     { disease: "disease 3", id: 3 },
-//   ].reduce((acc, cur) => ({ ...acc, [cur.disease]: cur.id }), {})
-// );
 
 module.exports = buildMapBoxData;
