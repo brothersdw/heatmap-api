@@ -2,5 +2,4 @@
 /keys
 .DS_Store
 knexfile.js
-/data/county-boundaries.csv
-/data/county-boundaries.json
+/testdata
