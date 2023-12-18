@@ -1,7 +1,6 @@
 const fs = require("fs");
 const floridaCoordinates = require("../data/county-boundaries.json");
 const diseaseModel = require("../models/diseases");
-const randomNum = () => Math.floor(Math.random() * (200000 - 0 + 1)) + 0; // to simulate counts from Integration
 
 function fixPolygonOrientation(polygon) {
   if (!Array.isArray(polygon)) {
@@ -24,17 +23,11 @@ function fixPolygonOrientation(polygon) {
 }
 const buildFLGeoJsonData = async (req, res) => {
   try {
-    const diseases = await diseaseModel.getDiseases();
     const features = floridaCoordinates.map((c) => {
       console.log("county: ", c.county);
-      const properties = diseases.reduce(
-        (arr, field) => ({
-          ...arr,
-          [field.disease_cases_key]: randomNum(),
-          county: c.county,
-        }),
-        {}
-      );
+      const properties = {
+        county: c.county,
+      };
       console.log("geometry: ", c.geometry);
       const flCoordinates = [[fixPolygonOrientation(c.geometry)]];
       console.log("florid coordinates: ", flCoordinates);
