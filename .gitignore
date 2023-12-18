@@ -3,4 +3,5 @@
 .DS_Store
 knexfile.js
 /testdata
-/data
+/data/county-boundaries.csv
+/data/county-boundaries.json
