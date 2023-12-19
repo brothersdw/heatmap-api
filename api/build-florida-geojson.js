@@ -1,7 +1,7 @@
 const fs = require("fs");
 const floridaCoordinates = require("../data/county-boundaries.json");
-const diseaseModel = require("../models/diseases");
 
+// function that ensures coordinates for each county are arranged correctly according to geoJSO standards
 function fixPolygonOrientation(polygon) {
   if (!Array.isArray(polygon)) {
     // Handle the case where polygon is not an array
@@ -21,16 +21,22 @@ function fixPolygonOrientation(polygon) {
 
   return polygon;
 }
+
+// Builds geoJSON file
 const buildFLGeoJsonData = async (req, res) => {
   try {
+    // Build objects in features array from county-coordinates.json
     const features = floridaCoordinates.map((c) => {
       console.log("county: ", c.county);
+      // Add properties
       const properties = {
         county: c.county,
       };
       console.log("geometry: ", c.geometry);
+      // Create flCoordinates array after fixing orientation of coordinates
       const flCoordinates = [[fixPolygonOrientation(c.geometry)]];
       console.log("florid coordinates: ", flCoordinates);
+      // Create gathergeoJSON Object
       const gathergeoJSONData = {
         type: "Feature",
         properties: properties,
@@ -42,12 +48,14 @@ const buildFLGeoJsonData = async (req, res) => {
       };
       return gathergeoJSONData;
     });
+    // Create geoJSONData object
     const geoJSONData = {
       type: "FeatureCollection",
       features,
     };
     const jsonFilePath = "./data/florida-county-boundaries.geojson";
     // console.log("Your stringified coordinates: ", coordinates);
+    // Write file to jsonFilePath
     fs.writeFile(jsonFilePath, JSON.stringify(geoJSONData), (err) => {
       if (err) {
         console.log(
@@ -58,7 +66,7 @@ const buildFLGeoJsonData = async (req, res) => {
       }
     });
     return res.status(200).send({
-      message: `geoJSON for Florida successfully build in ${jsonFilePath}`,
+      message: `geoJSON for Florida successfully built in ${jsonFilePath}`,
     });
   } catch (err) {
     console.log(
