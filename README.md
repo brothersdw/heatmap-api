@@ -74,8 +74,8 @@ cp knexfile-example.js knexfile.js
 
 #### Updating county boundaries
 
-- You will need to `POST` to http://localhost:3008/update-florida-coordinates before running the below get commands if `/data/county-boundaries.json` does not exist.
-- When you have confirmed that the `county-boundaries.json` file exists you can also run the other `/GET` routes to test functionality:
+- You will need to `POST` to http://localhost:3008/update-florida-coordinates before running the below `GET` requests if `/data/county-boundaries.json` does not exist.
+- When you have confirmed that the `county-boundaries.json` file exists you can also run a `GET` request to the other routes to test functionality:
   - http://localhost:3008/get-florida-county-coordinates
   - http://localhost:3008/get-florida-mapbox-data
 
