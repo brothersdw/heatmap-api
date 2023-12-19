@@ -3,7 +3,7 @@
 ## Getting started
 
 ```
-get clone https://github.com/brothersdw/heatmap-api.git
+git clone https://github.com/brothersdw/heatmap-api.git
 ```
 
 ### Installing dependencies
