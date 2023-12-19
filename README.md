@@ -58,9 +58,15 @@ UUID(),
 
 ```
 
+- After creating the table you will need to copy the `knexfile-example.js` into `knexfile.js` and replace `<user>` and `<password>` with your username and password for your local database.
+
+```
+cp knexfile-example.js knexfile.js
+```
+
 ### Start Heatmap API
 
-- Once the table has been built you can bring up `heatmap-api` by either running `npm start` (this means you don't care about developing you just want to see functionality) or you can run `npm run dev` in this mode nodemon will run and everytime you save a file that has an effect on api functionality, api will restart to implement and test changes.
+- Once the table has been built and you have configured your `knexfile.js` you can bring up `heatmap-api` by either running `npm start` (this means you don't care about developing you just want to see functionality) or you can run `npm run dev` in this mode nodemon will run and everytime you save a file that has an effect on api functionality, api will restart to implement and test changes.
 
 - After starting API you can test the api and that the api is querying the table that you created without issue by visiting http://localhost:3008/get-diseases. You should see the below if you configured everything correctly:
 
