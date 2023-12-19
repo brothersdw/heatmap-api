@@ -13,7 +13,7 @@ git clone https://github.com/brothersdw/heatmap-api.git
 ### Setting up MySQL database
 
 - You will need to first set up a local db.
-- Once you have a database created, create a table called `diseases`. You have to create this table with a specific format as the column values are explicitly looked at within api. Below you will find the commands to create the table and insert test values within it (the `disease_cases_key` and `disease_description` values can be anything but column names MUST be exact):
+- Once you have a database created, create a table called `diseases`. You have to create this table with a specific format as the column names are explicitly looked at within api. Below you will find the commands to create the table and insert test values within it (the `disease_cases_key` and `disease_description` values can be anything but column names MUST be exact):
   <br />
 
 1. Create the table:
