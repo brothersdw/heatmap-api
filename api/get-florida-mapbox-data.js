@@ -7,7 +7,6 @@ const buildMapBoxData = async (req, res) => {
   try {
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
     const features = floridaCoordinates.map((c) => {
-      console.log("county: ", c.county);
       // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
       // and add county to properties object
       const properties = diseases.reduce(
