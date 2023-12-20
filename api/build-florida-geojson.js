@@ -33,10 +33,8 @@ const buildFLGeoJsonData = async (req, res) => {
       const properties = {
         county: c.county,
       };
-      console.log("geometry: ", c.geometry);
       // Create flCoordinates array after fixing orientation of coordinates
       const flCoordinates = [[fixPolygonOrientation(c.geometry)]];
-      console.log("florid coordinates: ", flCoordinates);
       // Create gathergeoJSON Object
       const gathergeoJSONData = {
         type: "Feature",
