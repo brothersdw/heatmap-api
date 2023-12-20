@@ -2,7 +2,7 @@ const floridaCoordinates = require("../data/county-boundaries.json"); // Import 
 const diseaseModel = require("../models/diseases"); // Import diseases model
 const randomNum = () => Math.floor(Math.random() * (200000 - 0 + 1)) + 0; // to simulate counts from Integration
 
-// This function builds data in the structure that mapbox expects
+// Async function that builds data in the structure that mapbox expects
 const buildMapBoxData = async (req, res) => {
   try {
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
@@ -18,6 +18,7 @@ const buildMapBoxData = async (req, res) => {
         }),
         {}
       );
+      // Create object with all aggregated data
       const gatherMaboxData = {
         type: "Feature",
         properties: properties,
@@ -28,11 +29,14 @@ const buildMapBoxData = async (req, res) => {
       };
       return gatherMaboxData;
     });
+    // Create Feature Collection for mapbox to injest
     const mapboxData = {
       type: "FeatureCollection",
       features,
     };
-    return res.status(200).send(mapboxData);
+    return res.status(200).send(mapboxData); // Send a status of 200 OK and mapbox data
+
+    // If an error should occur log and send message with error
   } catch (err) {
     console.log("Something went wrong when trying to build mapbox data: ", err);
     return res.status(500).send({
