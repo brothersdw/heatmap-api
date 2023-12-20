@@ -58,7 +58,7 @@ UUID(),
 
 ```
 
-- After creating the table you will need to copy the `knexfile-example.js` into `knexfile.js` and replace `<user>` and `<password>` with your username and password for your local database.
+- After creating the table you will need to copy the `knexfile-example.js` into `knexfile.js` and replace `<user>`, `<password>` and `<database>` with your username, password and database name for your local database.
 
 ```
 cp knexfile-example.js knexfile.js
