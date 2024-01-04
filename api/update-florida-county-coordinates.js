@@ -7,7 +7,7 @@ const updateCoordinates = async (req, res) => {
   try {
     // Await GET request to opendatasoft to retrieve county boundaries
     const response = await axios.get(
-      "https://public.opendatasoft.com//api/explore/v2.1/catalog/datasets/us-county-boundaries/records?select=geo_shape%2C%20namelsad&where=stusab%20%3D%20'FL'&limit=67"
+      "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-county-boundaries/records?select=geo_shape%2C%20namelsad&where=stusab%20%3D%20'FL'&limit=67"
     );
     const coordinates = []; // Array to store coordinates
 

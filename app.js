@@ -3,6 +3,7 @@ const app = express();
 const port = 3008; // Set port
 const routes = require("./routes"); // Import all routes
 const cors = require("cors"); // !IMPORTANT - Import cors. This is so that you are able to use api from frontend
+// const createCountyCaseCounts = require("./routes/create-county-case-counts");
 
 const corsOptions = {
   origin: "http://localhost:3006", // Replace with your frontend's origin
