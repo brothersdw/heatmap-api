@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js",
+    "add-test-diseases": "./init.sh",
+    "dev": "concurrently \"nodemon app.js\" \"npm run add-test-diseases\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dustin Brothers",
@@ -16,10 +17,12 @@
     "bookshelf-json-columns": "^3.0.0",
     "bookshelf-upsert": "^0.2.0",
     "bookshelf-uuid": "^1.0.1",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "csv-writer": "^1.6.0",
     "express": "^4.18.2",
     "knex": "^3.1.0",
+    "mysql": "^2.18.1",
     "nodemon": "^3.0.2"
   }
 }
