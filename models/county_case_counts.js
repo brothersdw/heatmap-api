@@ -16,33 +16,6 @@ const County_case_counts = bookshelf.Collection.extend({
 County_case_counts.getCountyCaseCounts = () =>
   knex.select("*").from("county_case_counts");
 
-// const diseaseFields = [
-//   {
-//     id: randomUUID(),
-//     disease_cases_key: "test_disease_1",
-//     disease_description: "Test Disease 1",
-//   },
-//   {
-//     id: randomUUID(),
-//     disease_cases_key: "test_disease_2",
-//     disease_description: "Test Disease 2",
-//   },
-//   {
-//     id: randomUUID(),
-//     disease_cases_key: "test_disease_3",
-//     disease_description: "Test Disease 3",
-//   },
-//   {
-//     id: randomUUID(),
-//     disease_cases_key: "test_disease_4",
-//     disease_description: "Test Disease 4",
-//   },
-//   {
-//     id: randomUUID(),
-//     disease_cases_key: "test_disease_5",
-//     disease_description: "Test Disease 5",
-//   },
-// ];
 County_case_counts.insertCountyCaseCounts = (case_count_object) =>
   knex("county_case_counts").insert(case_count_object);
 
