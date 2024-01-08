@@ -1,18 +1,31 @@
 const floridaCoordinates = require("../data/county-boundaries.json"); // Import data from county-boundaries.json file
 const diseaseModel = require("../models/diseases"); // Import diseases model
+const countyCaseCountsModel = require("../models/county_case_counts");
 const randomNum = () => Math.floor(Math.random() * (200000 - 0 + 1)) + 0; // to simulate counts from Integration
 
 // Async function that builds data in the structure that mapbox expects
 const buildMapBoxData = async (req, res) => {
   try {
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
+    const countyCaseCounts = await countyCaseCountsModel.getCountyCaseCounts();
     const features = floridaCoordinates.map((c) => {
       // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
       // and add county to properties object
       const properties = diseases.reduce(
         (arr, field) => ({
           ...arr,
-          [field.disease_cases_key]: randomNum(),
+          // [field.disease_cases_key]: randomNum(),
+          [field.disease_cases_key]: Object.values(
+            JSON.parse(
+              // Get all incidences for county
+              countyCaseCounts.filter((cc) => c.county === cc.county)[0]
+                .incidences
+              // Filter through incidences to return value where the object key matches the current field.disease_cases_key
+            ).filter((ok) => {
+              if (Object.keys(ok)[0] === field.disease_cases_key)
+                return Object.values(ok)[0];
+            })[0]
+          )[0],
           county: c.county,
         }),
         {}
