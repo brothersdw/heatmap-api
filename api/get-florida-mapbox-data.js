@@ -25,8 +25,9 @@ const buildMapBoxData = async (req, res) => {
               if (Object.keys(ok)[0] === field.disease_cases_key)
                 return Object.values(ok)[0];
             })[0]
-          )[0],
+          )[0], // Simulates data from integration
           county: c.county,
+          isCounty: true,
         }),
         {}
       );

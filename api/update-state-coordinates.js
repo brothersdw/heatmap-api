@@ -5,7 +5,7 @@ const fs = require("fs"); // Import fs for writing file
 // Async function to update state-boundaries.json file
 const updateStateCoordinates = async (req, res) => {
   try {
-    // Await GET request to opendatasoft to retrieve county boundaries
+    // Await GET request to opendatasoft to retrieve state boundaries
     const response = await axios.get(
       "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-state-boundaries/records?select=name%2C%20st_asgeojson&where=stusab%20%3D%20'FL'&limit=20"
     );
