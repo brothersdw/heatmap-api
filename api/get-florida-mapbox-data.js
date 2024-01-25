@@ -1,7 +1,8 @@
 const floridaCoordinates = require("../data/county-boundaries.json"); // Import data from county-boundaries.json file
 const diseaseModel = require("../models/diseases"); // Import diseases model
 const countyCaseCountsModel = require("../models/county_case_counts");
-const randomNum = () => Math.floor(Math.random() * (200000 - 0 + 1)) + 0; // to simulate counts from Integration
+const randomNum = (range1, range2) =>
+  Math.floor(Math.random() * (range2 - range1 + 1)) + range1; // to simulate counts from Integration
 
 // Async function that builds data in the structure that mapbox expects
 const buildMapBoxData = async (req, res) => {
@@ -11,8 +12,9 @@ const buildMapBoxData = async (req, res) => {
     const features = floridaCoordinates.map((c) => {
       // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
       // and add county to properties object
-      const properties = diseases.reduce(
-        (arr, field) => ({
+      const properties = diseases.reduce((arr, field) => {
+        const generalPopulation = randomNum(200000, 500000);
+        return {
           ...arr,
           // [field.disease_cases_key]: randomNum(),
           [field.disease_cases_key]: Object.values(
@@ -28,9 +30,24 @@ const buildMapBoxData = async (req, res) => {
           )[0], // Simulates data from integration
           county: c.county,
           isCounty: true,
-        }),
-        {}
-      );
+          genPopulation: generalPopulation,
+          [field.disease_cases_key + "casesPercentage"]: Math.round(
+            (Object.values(
+              JSON.parse(
+                // Get all incidences for county
+                countyCaseCounts.filter((cc) => c.county === cc.county)[0]
+                  .incidences
+                // Filter through incidences to return value where the object key matches the current field.disease_cases_key
+              ).filter((ok) => {
+                if (Object.keys(ok)[0] === field.disease_cases_key)
+                  return Object.values(ok)[0];
+              })[0]
+            )[0] /
+              generalPopulation) *
+              100
+          ),
+        };
+      }, {});
       // Create object with all aggregated data
       const gatherMaboxData = {
         type: "Feature",
