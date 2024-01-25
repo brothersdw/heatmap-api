@@ -3,6 +3,7 @@ const floridaCoordinates = require("../data/county-boundaries.json"); // Import 
 const diseaseModel = require("../models/diseases"); // Import diseases model
 const countyCaseCountsModel = require("../models/county_case_counts");
 const randomNum = () => Math.floor(Math.random() * (200000 - 0 + 1)) + 0; // to simulate counts from Integration
+const randomPer = () => Math.floor(Math.random() * (0.8 - 0 + 1)) + 0.1;
 
 // Async function that builds data in the structure that mapbox expects
 const createCountyCaseCounts = async (req, res) => {
@@ -38,8 +39,15 @@ const createCountyCaseCounts = async (req, res) => {
           Object.keys(c)
             .filter((ck) => ck !== "county")
             .map((oc) => {
+              const numOfCases = randomNum();
+              // const genPopSum = Math.round(
+              //   randomPer() * numOfCases + numOfCases
+              // );
+              // const genPopPer = Math.round(numOfCases / genPopSum) * 100;
               return {
-                [oc]: randomNum(),
+                [oc]: numOfCases,
+                // generalPopPercentage: genPopPer,
+                // generalPopulation: genPopSum,
               };
             })
         ),
