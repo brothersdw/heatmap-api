@@ -2,8 +2,6 @@ const stateCoordinates = require("../data/state-boundaries.json"); // Import dat
 const diseaseModel = require("../models/diseases"); // Import diseases model
 const randomNum = () => Math.floor(Math.random() * (200000 - 0 + 1)) + 0; // to simulate counts from Integration
 const countyCaseCountsModel = require("../models/county_case_counts");
-const generalPopulation =
-  require("./get-florida-mapbox-data").genPopulationTotal;
 
 // Async function that builds data in the structure that mapbox expects
 const buildStateMapBoxData = async (req, res) => {
@@ -56,7 +54,6 @@ const buildStateMapBoxData = async (req, res) => {
             )[0]
           )[0],
           state: s.state,
-          stateGenPopulation: generalPopulation,
           isState: true,
         }),
         {}
