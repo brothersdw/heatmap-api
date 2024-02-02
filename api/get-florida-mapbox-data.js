@@ -5,10 +5,20 @@ const randomNum = (range1, range2) =>
   Math.floor(Math.random() * (range2 - range1 + 1)) + range1; // to simulate counts from Integration
 
 // Async function that builds data in the structure that mapbox expects
+// let genPopulationTotal = 0;
 const buildMapBoxData = async (req, res) => {
   try {
+    console.log("Params: ", req.query);
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
-    const countyCaseCounts = await countyCaseCountsModel.getCountyCaseCounts();
+    const countyCaseCounts =
+      req.query.date1 && req.query.date2
+        ? await countyCaseCountsModel.getCountyCaseCountsByDate
+        : req.query.date1 && !req.query.date2
+        ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+            req.query.date1 + " 00:00:00",
+            req.query.date1 + " 23:59:59"
+          )
+        : await countyCaseCountsModel.getCountyCaseCountsDefault();
     const features = floridaCoordinates.map((c) => {
       // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
       // and add county to properties object
@@ -31,7 +41,7 @@ const buildMapBoxData = async (req, res) => {
           county: c.county,
           isCounty: true,
           genPopulation: generalPopulation,
-          [field.disease_cases_key + "casesPercentage"]: Math.round(
+          [field.disease_cases_key + "_cases_percentage"]:
             (Object.values(
               JSON.parse(
                 // Get all incidences for county
@@ -44,8 +54,7 @@ const buildMapBoxData = async (req, res) => {
               })[0]
             )[0] /
               generalPopulation) *
-              100
-          ),
+            100,
         };
       }, {});
       // Create object with all aggregated data

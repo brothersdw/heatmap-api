@@ -5,6 +5,8 @@ exports.up = (knex) =>
     if (!exists) {
       return knex.schema.createTable("county_case_counts", function (table) {
         table.string("id", 255).notNullable().unique();
+        table.dateTime("created_at");
+        table.dateTime("updated_at");
         table.string("county", 5000);
         table.string("incidences", 10000);
       });

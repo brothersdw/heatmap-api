@@ -8,10 +8,11 @@ const randomPer = () => Math.floor(Math.random() * (0.8 - 0 + 1)) + 0.1;
 // Async function that builds data in the structure that mapbox expects
 const createCountyCaseCounts = async (req, res) => {
   try {
-    const countyCases = await countyCaseCountsModel.getCountyCaseCounts();
+    const countyCases =
+      await countyCaseCountsModel.getCountyCaseCountsDefault();
     if (countyCases.length > 0) {
       console.log(
-        "Test county case counts already exist in the county_case_counts table."
+        "Test county case counts already exist in the county_case_counts table.\n"
       );
       return res.status(200).send({
         message:
@@ -19,25 +20,45 @@ const createCountyCaseCounts = async (req, res) => {
       });
     }
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
-    const county_case_counts = floridaCoordinates.map((c) => {
-      const aggregateData = diseases.reduce(
-        (arr, field) => ({
-          ...arr,
-          [field.disease_cases_key]: randomNum(),
-          county: c.county,
-        }),
-        {}
-      );
-      return aggregateData;
+    const aggregateData = [];
+    floridaCoordinates.map((c) => {
+      for (let i = 0; i < 365; i++) {
+        const date = new Date();
+        const day =
+          new Date(date.setDate(date.getDate() - i))
+            .toISOString()
+            .split("T")[0] +
+          " " +
+          new Date(date.setDate(date.getDate() - i))
+            .toISOString()
+            .split("T")[1]
+            .split(".")[0];
+        const countyData = diseases.reduce(
+          (arr, field) => ({
+            ...arr,
+            created_at: day,
+            updated_at: day,
+            [field.disease_cases_key]: randomNum(),
+            county: c.county,
+          }),
+          {}
+        );
+        aggregateData.push(countyData);
+      }
     });
     // const filteredDiseaseCases = county_case_counts.filter((c) => Object);
-    const case_count_object = county_case_counts.map((c) => {
+    const case_count_object = aggregateData.map((c) => {
       return {
         id: randomUUID(),
+        created_at: c.created_at,
+        updated_at: c.updated_at,
         county: c.county,
         incidences: JSON.stringify(
           Object.keys(c)
-            .filter((ck) => ck !== "county")
+            .filter(
+              (ck) =>
+                ck !== "county" && ck !== "created_at" && ck !== "updated_at"
+            )
             .map((oc) => {
               const numOfCases = randomNum();
               // const genPopSum = Math.round(
