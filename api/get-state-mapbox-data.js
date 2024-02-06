@@ -8,7 +8,7 @@ const buildStateMapBoxData = async (req, res) => {
   try {
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
     const stateLevelCaseCounts = await countyCaseCountsModel
-      .getCountyCaseCounts()
+      .getCountyCaseCountsDefault()
       .then((result) => {
         const disease_keys = [];
         result.map((r) =>

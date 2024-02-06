@@ -1,3 +1,4 @@
+const { randomUUID } = require("crypto");
 const floridaCoordinates = require("../data/county-boundaries.json"); // Import data from county-boundaries.json file
 const diseaseModel = require("../models/diseases"); // Import diseases model
 const countyCaseCountsModel = require("../models/county_case_counts");
@@ -5,10 +6,134 @@ const randomNum = (range1, range2) =>
   Math.floor(Math.random() * (range2 - range1 + 1)) + range1; // to simulate counts from Integration
 
 // Async function that builds data in the structure that mapbox expects
+// let genPopulationTotal = 0;
 const buildMapBoxData = async (req, res) => {
   try {
+    console.log("Params: ", req.query);
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
-    const countyCaseCounts = await countyCaseCountsModel.getCountyCaseCounts();
+    let countyCaseCounts;
+    /******************Uncomment this block in prod************************/
+    // const countyCaseCounts = // Only commented out during testing
+    //     req.query.date1 && req.query.date2
+    //       ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+    //           req.query.date1,
+    //           req.query.date2
+    //         )
+    //       : req.query.date1 && !req.query.date2
+    //       ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+    //           req.query.date1 + " 00:00:00",
+    //           req.query.date1 + " 23:59:59"
+    //         )
+    //       : await countyCaseCountsModel.getCountyCaseCountsDefault();
+
+    /**************Important this is only a TESTING block remove below in brackets for prod*********************/
+    // Strictly for testing this block will be removed in prod this is a temp solution
+    // to make sure there are rows for the day that is selected {
+    let checkCaseCounts;
+    if (req.query.date1) {
+      const date1 = req.query.date1 + " 00:00:00";
+      const date2 = req.query.date1 + " 23:59:59";
+      checkCaseCounts = await countyCaseCountsModel.getCountyCaseCountsByDate(
+        date1,
+        date2
+      );
+    } else {
+      checkCaseCounts =
+        await countyCaseCountsModel.getCountyCaseCountsDefault();
+    }
+    console.log("case counts: ", checkCaseCounts);
+    if (checkCaseCounts.length > 0) {
+      countyCaseCounts =
+        req.query.date1 && req.query.date2
+          ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+              req.query.date1,
+              req.query.date2
+            )
+          : req.query.date1 && !req.query.date2
+          ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+              req.query.date1 + " 00:00:00",
+              req.query.date1 + " 23:59:59"
+            )
+          : await countyCaseCountsModel.getCountyCaseCountsDefault();
+      console.log("in this block");
+    } else {
+      const aggregateData = [];
+      floridaCoordinates.map((c) => {
+        const date = new Date();
+        let day;
+        if (req.query.date1) {
+          day = req.query.date1 + " " + "01:00:00";
+        } else {
+          day =
+            new Date(date.setDate(date.getDate())).toISOString().split("T")[0] +
+            " " +
+            new Date(date.setDate(date.getDate()))
+              .toISOString()
+              .split("T")[1]
+              .split(".")[0];
+        }
+
+        console.log("this is the day:", day);
+        const countyData = diseases.reduce(
+          (arr, field) => ({
+            ...arr,
+            created_at: day,
+            updated_at: day,
+            [field.disease_cases_key]: randomNum(0, 200000),
+            county: c.county,
+          }),
+          {}
+        );
+        aggregateData.push(countyData);
+      });
+      let randomId = randomUUID();
+      let idExists = await countyCaseCountsModel.getCountyCaseCountsById(
+        randomId
+      );
+      while (idExists.length > 0) {
+        randomId = randomUUID();
+        idExists = await countyCaseCountsModel.getCountyCaseCountsById(
+          randomId
+        );
+      }
+      const case_count_object = aggregateData.map((c) => {
+        return {
+          id: randomUUID(),
+          created_at: c.created_at,
+          updated_at: c.updated_at,
+          county: c.county,
+          incidences: JSON.stringify(
+            Object.keys(c)
+              .filter(
+                (ck) =>
+                  ck !== "county" && ck !== "created_at" && ck !== "updated_at"
+              )
+              .map((oc) => {
+                const numOfCases = randomNum(0, 200000);
+                return {
+                  [oc]: numOfCases,
+                };
+              })
+          ),
+        };
+      });
+      console.log("county case counts object: ", case_count_object);
+      await countyCaseCountsModel.insertCountyCaseCounts(case_count_object);
+      countyCaseCounts =
+        req.query.date1 && req.query.date2
+          ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+              req.query.date1,
+              req.query.date2
+            )
+          : req.query.date1 && !req.query.date2
+          ? await countyCaseCountsModel.getCountyCaseCountsByDate(
+              req.query.date1 + " 00:00:00",
+              req.query.date1 + " 23:59:59"
+            )
+          : await countyCaseCountsModel.getCountyCaseCountsDefault();
+    }
+    // } End of block to remove for prod
+
     const features = floridaCoordinates.map((c) => {
       // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
       // and add county to properties object
@@ -31,7 +156,7 @@ const buildMapBoxData = async (req, res) => {
           county: c.county,
           isCounty: true,
           genPopulation: generalPopulation,
-          [field.disease_cases_key + "casesPercentage"]: Math.round(
+          [field.disease_cases_key + "_cases_percentage"]:
             (Object.values(
               JSON.parse(
                 // Get all incidences for county
@@ -44,8 +169,7 @@ const buildMapBoxData = async (req, res) => {
               })[0]
             )[0] /
               generalPopulation) *
-              100
-          ),
+            100,
         };
       }, {});
       // Create object with all aggregated data
