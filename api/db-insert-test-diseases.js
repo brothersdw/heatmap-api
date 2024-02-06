@@ -4,7 +4,7 @@ const insertTestDiseases = async (req, res) => {
   try {
     const diseases = await diseasesModel.getDiseases();
     if (diseases.length > 0) {
-      console.log("Test diseases already exist in the diseases table.");
+      console.log("Test diseases already exist in the diseases table.\n");
       return res.status(200).send({
         message: "Test diseases already exist in the diseases table.",
       });
