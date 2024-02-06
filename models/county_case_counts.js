@@ -15,9 +15,7 @@ const County_case_counts = bookshelf.Collection.extend({
 // Select all columns and rows from county_case_counts table for current day
 
 const date = new Date();
-const dateToISOString = new Date(
-  date.setDate(date.getDate() - 1)
-).toISOString();
+const dateToISOString = new Date(date.setDate(date.getDate())).toISOString();
 const currentDayStart = dateToISOString.split("T")[0] + "T" + "00:00:00.000Z";
 const currentDayEnd = dateToISOString.split("T")[0] + "T" + "23:59:50.000Z";
 
@@ -26,6 +24,9 @@ County_case_counts.getCountyCaseCountsDefault = () =>
     .select("*")
     .from("county_case_counts")
     .whereBetween("created_at", [currentDayStart, currentDayEnd]);
+
+County_case_counts.getCountyCaseCountsById = (id) =>
+  knex.select("*").from("county_case_counts").where({ id: id });
 
 // Select all columns and rows from county_case_counts table for specified date range
 County_case_counts.getCountyCaseCountsByDate = (date1, date2) =>
