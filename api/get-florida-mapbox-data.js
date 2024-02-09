@@ -9,7 +9,6 @@ const randomNum = (range1, range2) =>
 // let genPopulationTotal = 0;
 const buildMapBoxData = async (req, res) => {
   try {
-    console.log("Params: ", req.query);
     const diseases = await diseaseModel.getDiseases(); // Await database query for diseases
     let countyCaseCounts;
     /******************Uncomment this block in prod************************/
@@ -41,7 +40,6 @@ const buildMapBoxData = async (req, res) => {
       checkCaseCounts =
         await countyCaseCountsModel.getCountyCaseCountsDefault();
     }
-    console.log("case counts: ", checkCaseCounts);
     if (checkCaseCounts.length > 0) {
       countyCaseCounts =
         req.query.date1 && req.query.date2
@@ -55,7 +53,6 @@ const buildMapBoxData = async (req, res) => {
               req.query.date1 + " 23:59:59"
             )
           : await countyCaseCountsModel.getCountyCaseCountsDefault();
-      console.log("in this block");
     } else {
       const aggregateData = [];
       floridaCoordinates.map((c) => {
@@ -73,7 +70,6 @@ const buildMapBoxData = async (req, res) => {
               .split(".")[0];
         }
 
-        console.log("this is the day:", day);
         const countyData = diseases.reduce(
           (arr, field) => ({
             ...arr,
@@ -117,7 +113,6 @@ const buildMapBoxData = async (req, res) => {
           ),
         };
       });
-      console.log("county case counts object: ", case_count_object);
       await countyCaseCountsModel.insertCountyCaseCounts(case_count_object);
       countyCaseCounts =
         req.query.date1 && req.query.date2
@@ -139,6 +134,10 @@ const buildMapBoxData = async (req, res) => {
       // and add county to properties object
       const properties = diseases.reduce((arr, field) => {
         const generalPopulation = randomNum(200000, 500000);
+        const date = countyCaseCounts
+          .filter((cc) => c.county === cc.county)[0]
+          .created_at.toISOString()
+          .split("T")[0];
         return {
           ...arr,
           // [field.disease_cases_key]: randomNum(),
@@ -153,6 +152,7 @@ const buildMapBoxData = async (req, res) => {
                 return Object.values(ok)[0];
             })[0]
           )[0], // Simulates data from integration
+          created_at: date,
           county: c.county,
           isCounty: true,
           genPopulation: generalPopulation,

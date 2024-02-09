@@ -11,6 +11,7 @@ const createCountyCaseCounts = require("./create-county-case-counts");
 const getStateCoordinates = require("./get-state-coordinates");
 const getStateMapboxData = require("./get-state-mapbox-data");
 const insertTestDiseases = require("./db-insert-test-diseases");
+const getMapLineGraphData = require("./get-map-line-graph-data");
 
 // Set routes
 router.use("/update-florida-county-coordinates", updateFloridaCoordinates);
@@ -23,5 +24,6 @@ router.use("/get-state-mapbox-data", getStateMapboxData);
 router.use("/get-florida-mapbox-data", getFloridaMapboxData);
 router.use("/build-florida-geojson", buildFLGeoJsonData);
 router.use("/insert-test-diseases", insertTestDiseases);
+router.use("/get-map-line-graph-data", getMapLineGraphData);
 
 module.exports = router;
