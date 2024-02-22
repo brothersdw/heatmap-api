@@ -21,7 +21,7 @@ const updateStateCoordinates = async (req, res) => {
         idExists = coordinates.filter((ids) => ids.id === stateId);
         console.log(`There was an existing id ${stateId}`);
       }
-
+      
       // Create object for coordinates and push to coordinates array
       coordinates.push({
         id: stateId,

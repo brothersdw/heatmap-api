@@ -4,3 +4,4 @@
 knexfile.js
 /data/county-boundaries.csv
 /data/county-boundaries.json
+/data/us-county-boundaries.json

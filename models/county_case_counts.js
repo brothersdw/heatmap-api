@@ -19,20 +19,26 @@ const dateToISOString = new Date(date.setDate(date.getDate())).toISOString();
 const currentDayStart = dateToISOString.split("T")[0] + "T" + "00:00:00.000Z";
 const currentDayEnd = dateToISOString.split("T")[0] + "T" + "23:59:50.000Z";
 
-County_case_counts.getCountyCaseCountsDefault = () =>
+County_case_counts.getCountyCaseCountsDefault = (state) =>
+  // console.log("state is: ", state);
   knex
     .select("*")
     .from("county_case_counts")
+    .where("state_ab", state)
+    // .whereBetween("created_at", [currentDayStart, currentDayEnd]);
+    // .where("created_at", ">=", currentDayStart)
+    // .where("created_at", "<=", currentDayEnd);
     .whereBetween("created_at", [currentDayStart, currentDayEnd]);
 
 County_case_counts.getCountyCaseCountsById = (id) =>
   knex.select("*").from("county_case_counts").where({ id: id });
 
 // Select all columns and rows from county_case_counts table for specified date range
-County_case_counts.getCountyCaseCountsByDate = (date1, date2) =>
+County_case_counts.getCountyCaseCountsByDate = (state, date1, date2) =>
   knex
     .select("*")
     .from("county_case_counts")
+    .where({ state_ab: state })
     .whereBetween("created_at", [date1, date2]);
 
 County_case_counts.insertCountyCaseCounts = (case_count_object) =>

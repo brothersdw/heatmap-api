@@ -1,8 +1,10 @@
 const countyDataModel = require("../models/county_case_counts");
 const getGraphData = async (req, res) => {
+  const state = String(req.query.state).toUpperCase();
   const startDate = req.query.startDate;
   const endDate = req.query.endDate;
   const countyData = await countyDataModel.getCountyCaseCountsByDate(
+    state,
     startDate,
     endDate
   );

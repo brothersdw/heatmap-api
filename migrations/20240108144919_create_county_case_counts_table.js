@@ -7,8 +7,17 @@ exports.up = (knex) =>
         table.string("id", 255).notNullable().unique();
         table.dateTime("created_at");
         table.dateTime("updated_at");
-        table.string("county", 5000);
-        table.string("incidences", 10000);
+        table.string("county", 1000);
+        table.string("state", 1000);
+        table.string("state_ab", 1000);
+        table.text("incidences");
+        // table.index(
+        //   ["created_at", "county", "state_ab"],
+        //   "idx_created_at_county_state_ab",
+        //   {
+        //     indexType: "BTREE",
+        //   }
+        // );
       });
     }
   });
