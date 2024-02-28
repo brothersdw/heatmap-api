@@ -83,12 +83,14 @@ const createCountyCaseCounts = async (req, res) => {
               err
             );
           });
-
+        console.clear();
         console.log(
           `Database build progress: ${((i / 365) * 100).toFixed(2)}%`
         );
       }
     });
+    console.clear();
+    console.log("Database build progress: 100%");
     return res.status(200).send({
       message:
         "Successfully created county case counts in create-county-case-counts.js",

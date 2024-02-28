@@ -82,33 +82,35 @@ const buildStateMapBoxData = async (req, res) => {
               };
               return gatherMaboxData;
             })
-        : stateCoordinates.map((s, idx) => {
-            // idx === 0 && console.log("current state in state mapbox data:", s);
-            // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
-            // and add county to properties object
-            const properties = {
-              state: s.name,
-              state_ab: s.stusab,
-              isState: true,
-            };
-            const stateObj = {
-              type: s.st_asgeojson.geometry.type,
-              geometry: {
-                coordinates: s.st_asgeojson.geometry.coordinates,
+        : stateCoordinates
+            .filter((sc) => sc.stusab !== state)
+            .map((s, idx) => {
+              // idx === 0 && console.log("current state in state mapbox data:", s);
+              // For each set of coordinate arrays grab value of disease cases key for key, add random number as value
+              // and add county to properties object
+              const properties = {
+                state: s.name,
+                state_ab: s.stusab,
+                isState: true,
+              };
+              const stateObj = {
                 type: s.st_asgeojson.geometry.type,
-              },
-            };
-            // Create object with all aggregated data
-            const gatherMaboxData = {
-              type: "Feature",
-              properties: properties,
-              geometry: {
-                type: stateObj.type,
-                coordinates: stateObj.geometry.coordinates,
-              },
-            };
-            return gatherMaboxData;
-          });
+                geometry: {
+                  coordinates: s.st_asgeojson.geometry.coordinates,
+                  type: s.st_asgeojson.geometry.type,
+                },
+              };
+              // Create object with all aggregated data
+              const gatherMaboxData = {
+                type: "Feature",
+                properties: properties,
+                geometry: {
+                  type: stateObj.type,
+                  coordinates: stateObj.geometry.coordinates,
+                },
+              };
+              return gatherMaboxData;
+            });
     // Create Feature Collection for mapbox to injest
     const mapboxData = {
       type: "FeatureCollection",
