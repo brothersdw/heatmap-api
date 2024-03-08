@@ -41,6 +41,14 @@ County_case_counts.getCountyCaseCountsByDate = (state, date1, date2) =>
     .where({ state_ab: state })
     .whereBetween("created_at", [date1, date2]);
 
+County_case_counts.getCountyGraphData = (state, county, date1, date2) =>
+  knex
+    .select("*")
+    .from("county_case_counts")
+    .where({ state_ab: state })
+    .where({ county: county })
+    .whereBetween("created_at", [date1, date2]);
+
 County_case_counts.insertCountyCaseCounts = (case_count_object) =>
   knex("county_case_counts").insert(case_count_object);
 
